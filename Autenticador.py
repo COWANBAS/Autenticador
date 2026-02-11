@@ -5,56 +5,49 @@ import json
 
 ARQUIVO = "contas.json"
 
-def carregar_contas():
-    if os.path.exists(ARQUIVO):
-        with open(ARQUIVO, "r") as f:
-            return json.load(f)
-    return {}
+class Autenticador:
+    def __init__(self, arquivo=ARQUIVO):
+        self.arquivo = arquivo
+        self.contas = self.carregar_contas()
 
-def salvar_contas(contas):
-    with open(ARQUIVO, "w") as f:
-        json.dump(contas, f)
+    def carregar_contas(self):
+        if os.path.exists(self.arquivo):
+            with open(self.arquivo, "r") as f:
+                return json.load(f)
+        return {}
 
-def adicionar_conta():
-    nome = input("Nome da conta: ")
-    secret = input("Chave secreta: ").replace(" ", "")
-    contas = carregar_contas()
-    contas[nome] = secret
-    salvar_contas(contas)
-    print("Conta adicionada!")
+    def salvar_contas(self):
+        with open(self.arquivo, "w") as f:
+            json.dump(self.contas, f)
 
-def mostrar_codigos():
-    contas = carregar_contas()
-    if not contas:
-        print("Nenhuma conta cadastrada.")
-        return
+    def adicionar_conta(self, nome, secret):
+        secret = secret.replace(" ", "")
+        self.contas[nome] = secret
+        self.salvar_contas()
 
-    while True:
-        os.system("clear")
-        print("=== AUTENTICADOR LINUX ===\n")
+    def remover_conta(self, nome):
+        if nome in self.contas:
+            del self.contas[nome]
+            self.salvar_contas()
 
-        restante = 30 - int(time.time()) % 30
+    def listar_contas(self):
+        return list(self.contas.keys())
 
-        for nome, secret in contas.items():
+    def gerar_codigo(self, nome):
+        if nome not in self.contas:
+            return None
+        totp = pyotp.TOTP(self.contas[nome])
+        return totp.now()
+
+    def gerar_todos_codigos(self):
+        codigos = {}
+        for nome, secret in self.contas.items():
             totp = pyotp.TOTP(secret)
-            print(f"{nome}: {totp.now()}")
+            codigos[nome] = totp.now()
+        return codigos
 
-        print(f"\nExpira em: {restante} segundos")
-        time.sleep(1)
-
-def menu():
-    while True:
-        print("\n1 - Adicionar conta")
-        print("2 - Mostrar códigos")
-        print("3 - Sair")
-        opcao = input("Escolha: ")
-
-        if opcao == "1":
-            adicionar_conta()
-        elif opcao == "2":
-            mostrar_codigos()
-        elif opcao == "3":
-            break
-
+    def tempo_restante(self):
+        return 30 - int(time.time()) % 30
+        
 if __name__ == "__main__":
-    menu()
+    app = Autenticador()

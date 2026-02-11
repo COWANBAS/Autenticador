@@ -4,10 +4,10 @@ Aplicativo de autenticador 2FA para computador, para que seja gerado os códigos
 
 # Atualizações futuras
 
-Otimizar mais o código
+X Otimizar mais o código 
 <br><br>
-Adicionar mais funcionalidades 
+X Adicionar mais funcionalidades 
 <br><br>
-Fazer portabilidade para Windows
+X Fazer portabilidade para Windows 
 <br><br>
-Criar uma interface minimalista de facil uso geral
+X Criar uma interface minimalista de facil uso geral

@@ -48,6 +48,3 @@ class Autenticador:
 
     def tempo_restante(self):
         return 30 - int(time.time()) % 30
-        
-if __name__ == "__main__":
-    app = Autenticador()
